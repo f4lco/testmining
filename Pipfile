@@ -27,6 +27,7 @@ treon = "*"
 
 [dev-packages]
 pytest = "*"
+nbdime = "*"
 
 [requires]
 python_version = "3.6"
