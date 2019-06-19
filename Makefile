@@ -13,7 +13,7 @@ projects:
 	pipenv run python -m testmining.projects -f $(DUMP)
 
 builds:
-	pipenv run python -m testmining.builds -f $(DUMP) -s builds.hd5
+	PRIO_BASE=output pipenv run python -m testmining.builds -f $(DUMP)
 
 sanity:
 	pipenv run python -m testmining.sanity
