@@ -18,25 +18,21 @@ builds:
 sanity:
 	pipenv run python -m testmining.sanity
 
-apfd_plots:
+boxplot:
 	PRIO_BASE=output pipenv run python -m testmining.apfd_plot boxes untreated recently-failed matrix-recently-changed optimal-failure
 
-apfd_csv:
+boxplot-open:
+	find output -path "*/${PRIO_QUALIFIER}-evaluation/*-boxplot.png" | xargs open
+
+ridgeline:
+	PRIO_BASE=output pipenv run python -m testmining.apfd_plot ridgelines untreated recently-failed matrix-recently-changed optimal-failure
+
+ridgeline-open:
+	find output -path "*/${PRIO_QUALIFIER}-evaluation/*-ridgeline.png" | xargs open
+
+combined:
+	PRIO_BASE=output pipenv run python -m testmining.apfd_plot combined --output combined-foo.png untreated random lru recently-failed matrix-conditional-prob matrix-file-similarity matrix-tc-similarity matrix-recently-changed
+
+apfd:
 	PRIO_BASE=output pipenv run python -m testmining.apfd_computation
-
-open_baseline_boxplot:
-	find output -path "*/baseline-evaluation/*-boxplot.png" | xargs open
-
-open_baseline_ridgeline:
-	find output -path "*/baseline-evaluation/*-ridgeline.png" | xargs open
-
-open_experimental_boxplot:
-	find output -path "*/experimental-evaluation/*-boxplot.png" | xargs open
-
-open_experimental_ridgeline:
-	find output -path "*/experimental-evaluation/*-ridgeline.png" | xargs open
-
-.PHONY: notebook projects builds \
-apfd_plots apfd_csv open_baseline_boxplot \
-open_experimental_boxplot
 
