@@ -1,5 +1,16 @@
 # -*- encoding: utf-8 -*-
+import click
+import logging
+
+import pandas as pd
+
 from collections import OrderedDict
+
+from testmining import loader, folders
+
+LOG = logging.getLogger(__file__)
+
+KEY_BUILDS = 'builds'
 
 
 def group_by_build(data):
@@ -34,14 +45,25 @@ def build_statistics(data):
     return groups.agg(aggregations)
 
 
-def main():
-    from testmining.loader import read_dump
-    from testmining.cli import argument_parser, exporter
+def read(key):
+    with pd.HDFStore(folders.builds()) as store:
+        return store[key]
 
-    args = argument_parser().parse_args()
-    data = read_dump(args.filename)
+
+def write(key, df):
+    filename = folders.builds()
+    LOG.info("Begin writing DF '%s' to '%s'", key, filename)
+    with pd.HDFStore(filename) as store:
+        store[key] = df
+    LOG.info("Completed writing DF '%s' to '%s'", key, filename)
+
+
+@click.command()
+@click.option('-f', '--filename', help='Location of TravisTorrent CSV', required=True)
+def main(filename):
+    data = loader.read_dump(filename)
     statistics = build_statistics(data)
-    exporter(args)('builds', statistics)
+    write(KEY_BUILDS, statistics)
 
 
 if __name__ == '__main__':
