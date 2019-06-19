@@ -54,10 +54,31 @@ def offenders():
         offenders = pd.read_csv(folders.offenders(project_path))
         mask = apfd['travisJobId'].isin(offenders['tr_job_id'])
         output = os.path.join(folders.evaluation(project_path), 'offenders-%s.png' % project_name)
-        apfd_plot.save_ridgeline('Offenders in %s' % project_name,
+        apfd_plot.save_box_plot('Offenders in %s' % project_name,
                                  project_path,
                                  apfd[mask],
                                  output)
+
+
+@cli.command()
+@click.option('--output', required=True)
+def offenders_combined(output):
+    dfs = []
+    for project_name, project_path in folders.projects():
+        apfd = pd.read_csv(folders.apfd(project_path))[[
+            'travisJobId',
+            'recently-failed',
+            'matrix-recently-changed',
+        ]]
+        offenders = pd.read_csv(folders.offenders(project_path))
+        mask = apfd['travisJobId'].isin(offenders['tr_job_id'])
+        dfs.append(apfd[mask])
+
+    df = pd.concat(dfs)
+    apfd_plot.save_box_plot('Offenders',
+                             None,
+                             df,
+                             output)
 
 
 @cli.command()
@@ -71,10 +92,28 @@ def pull_requests():
         pr = pd.read_csv(folders.pull_requests(project_path))
         mask = apfd['travisJobId'].isin(pr['tr_job_id'])
         output = os.path.join(folders.evaluation(project_path), 'pr-%s.png' % project_name)
-        apfd_plot.save_ridgeline('PRs in %s' % project_name,
+        apfd_plot.save_box_plot('PRs in %s' % project_name,
                                  project_path,
                                  apfd[mask],
                                  output)
+
+
+@cli.command()
+@click.option('--output', required=True)
+def pull_requests_combined(output):
+    dfs = []
+    for project_name, project_path in folders.projects():
+        apfd = pd.read_csv(folders.apfd(project_path))[[
+            'travisJobId',
+            'recently-failed',
+            'matrix-recently-changed',
+        ]]
+        pr = pd.read_csv(folders.pull_requests(project_path))
+        mask = apfd['travisJobId'].isin(pr['tr_job_id'])
+        dfs.append(apfd[mask])
+
+    df = pd.concat(dfs)
+    apfd_plot.save_box_plot('Pull Requests', None, df, output)
 
 
 if __name__ == '__main__':
