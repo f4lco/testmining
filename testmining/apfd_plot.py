@@ -209,11 +209,11 @@ def _main(strategies, plot_method):
         plot_method(project_name, project_path, df)
 
 
-def collect_apfd(strategies):
+def collect_apfd(strategies=None):
     df = []
     for project_name, project_path in folders.projects():
         df.append(read_apfd(project_path, strategies))
-    return pd.concat(df)
+    return pd.concat(df, sort=True)
 
 
 @click.group()
