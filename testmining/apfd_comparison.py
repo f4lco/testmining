@@ -2,31 +2,65 @@
 
 import click
 
+import numpy as np
+
 from collections import defaultdict
 from pprint import pprint
 
 from testmining.apfd_plot import read_apfd
 from testmining import folders
 
+"""
+Make simple statements on per-project basis.
 
-def thesis1(df):
+For example: we have evidence that on X projects, strategy Y is superior.
+There are two groups of statements: one that is only concerned with baseline
+heuristics, and another set of statements comparing all matrix-based strategies
+to the best baseline heuristic.
+"""
+
+
+STATEMENTS = defaultdict(list)
+
+
+def baseline(func):
+    STATEMENTS['baseline'].append(func)
+    return func
+
+
+def matrix(func):
+    STATEMENTS['matrix'].append(func)
+    return func
+
+
+def statements(group):
+    for f in STATEMENTS[group]:
+        yield f.__name__, f
+
+
+@baseline
+def untreated_not_last(df):
     return (df['untreated'] > df['random']) or \
            (df['untreated'] > df['lru'])
 
 
-def thesis2(df):
+@baseline
+def recently_failed_first(df):
     return df.idxmax() == 'recently-failed'
 
 
-def thesis3(df):
+@baseline
+def random_beats_lru(df):
     return df['random'] > df['lru']
 
 
-def thesis4(df):
+@baseline
+def lru_is_worse(df):
     return df['lru'] < df['untreated']
 
 
-def thesis5(df):
+@baseline
+def random_is_worse(df):
     return df['random'] < df['untreated']
 
 
@@ -46,24 +80,45 @@ def baseline():
             'recently-failed',
         ]].median()
 
-        d['untreated-not-last'] += thesis1(df)
-        d['recently-failed-first'] += thesis2(df)
-        d['random-beats-lru'] += thesis3(df)
-        d['lru-is-worse'] += thesis4(df)
-        d['random-is-worse'] += thesis5(df)
+        for key, func in statements('baseline'):
+            d[key] += func(df)
 
     pprint(dict(d))
 
 
+@matrix
+def recently_changed_first(df):
+    return df.idxmax() == 'matrix-recently-changed'
+
+
+@matrix
+def matrix_first(df):
+    return df.idxmax().startswith('matrix')
+
+
+@matrix
+def on_par(df):
+    return matrix_first(df) or \
+           df.filter(regex='matrix*').idxmax() == df['recently-failed']
+
+
+@matrix
+def on_par_close(df):
+    if matrix_first(df):
+        return True
+
+    second = df.filter(regex='matrix*').idxmax()
+    return np.isclose(df['recently-failed'], df[second])
+
+
+@matrix
+def file_path_agreement(df):
+    return np.isclose(df['matrix-path-similarity'],
+                      df['matrix-file-similarity'])
+
+
 @cli.command()
 def matrix():
-
-    def t1(df):
-        return df.idxmax().startswith('matrix')
-
-    def t2(df):
-        return df['matrix-path-similarity'] == df['matrix-file-similarity']
-
     d = defaultdict(lambda: 0)
     for project_name, project_path in folders.projects():
         df = read_apfd(project_path)[[
@@ -75,8 +130,8 @@ def matrix():
             'matrix-recently-changed',
         ]].median()
 
-        d['matrix-wins'] += t1(df)
-        d['file-path-agreement'] += t2(df)
+        for name, func in statements('matrix'):
+            d[name] += func(df)
 
     pprint(dict(d))
 
