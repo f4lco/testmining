@@ -36,3 +36,11 @@ combined:
 apfd:
 	PRIO_BASE=output pipenv run python -m testmining.apfd_computation
 
+thesis-images-mpl:
+	pipenv run python -m testmining.apfd_plot_mpl combined --output all-untreated-optimal.pdf untreated optimal-failure
+	pipenv run python -m testmining.apfd_plot_mpl combined --output baseline.pdf untreated random lru recently-failed
+	pipenv run python -m testmining.apfd_plot_mpl combined --output matrix.pdf recently-failed matrix-conditional-prob matrix-path-similarity matrix-file-similarity matrix-tc-similarity matrix-recently-changed
+
+evaluation: apfd sanity
+
+.PHONY: apfd

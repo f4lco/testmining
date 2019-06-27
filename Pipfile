@@ -24,6 +24,7 @@ click = "*"
 pipenv = "*"
 rbo = {editable = true, ref = "master", git = "https://github.com/changyaochen/rbo.git"}
 treon = "*"
+matplotlib = "*"
 
 [dev-packages]
 pytest = "*"
