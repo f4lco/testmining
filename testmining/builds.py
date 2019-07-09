@@ -28,12 +28,14 @@ def build_statistics(data):
     aggregations = OrderedDict([
 
         # Presumably identical for all jobs in this build
+        ('tr_build_number', 'first'),
         ('gh_project_name', 'first'),
         ('gh_lang', 'first'),
         ('gh_pull_req_num', 'first'),
         ('gh_is_pr', 'all'),
         ('git_branch', 'first'),
         ('git_all_built_commits', 'sum'),
+        ('gh_build_started_at', 'first'),
 
         # True aggregates
         ('test_failures', 'any'),

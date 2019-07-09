@@ -63,7 +63,7 @@ def patches(project_path):
 
 
 def builds():
-    return os.path.join(base_folder(), '..', 'builds.hd5')
+    return os.path.join(base_folder(), 'builds.hd5')
 
 
 def _ensure_exists(path):
