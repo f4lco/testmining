@@ -43,4 +43,4 @@ thesis-images-mpl:
 
 evaluation: apfd sanity
 
-.PHONY: apfd
+.PHONY: apfd notebook
