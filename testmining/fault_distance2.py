@@ -1,18 +1,40 @@
 # -*- encoding: utf-8 -*-
 import click
 import logging
+import os
 
 import altair as alt
 import numpy as np
 import pandas as pd
 
-from testmining import folders
+from testmining import folders, util
 from testmining.apfd import read_tests
 
 LOG = logging.getLogger(__file__)
 
 
-def _failure_distance(builds):
+def _load_builds():
+    path = folders.builds()
+    with pd.HDFStore(path) as store:
+        return store['builds']
+
+
+BUILDS = _load_builds()
+
+
+def build_timestamps(project_name):
+    builds = BUILDS[BUILDS['gh_project_name'] == util.db_project_name(project_name)]
+
+    end = builds['gh_build_started_at'] + \
+        pd.to_timedelta(builds['tr_duration'], unit='s')
+
+    return pd.DataFrame({
+        'begin': builds['gh_build_started_at'],
+        'end': end,
+    }).reset_index().set_index(builds['tr_build_number'])
+
+
+def _failure_distance(project_name, builds):
     """For every build, determine how many builds the current failures are in the past.
 
     For example:
@@ -27,34 +49,43 @@ def _failure_distance(builds):
     """
 
     build_numbers = builds.index.unique().sort_values(ascending=False)
-
-    def tests_from_index(index):
-        build_number = build_numbers[index]
-        return set(builds.loc[build_number]['testName'])
+    build_ts = build_timestamps(project_name).sort_index(ascending=False)
 
     index = 0
     rows = []
+
     while index < len(build_numbers):
-        red_tests = tests_from_index(index)
+        build_number = build_numbers[index]
+        red_tests = set(builds.loc[build_number]['testName'])
         prior_index = index + 1
         distance = {}
+        begin = pd.Series(build_ts.loc[build_number]['begin']).min()  # FIXME
 
         while prior_index < len(builds):
 
-            for test in tests_from_index(prior_index):
+            prior_build_number = build_numbers[prior_index]
+            prior_end = pd.Series(build_ts.loc[prior_build_number]['end']).max()  # FIXME
+            # Major problem with TravisTorrent: some build numbers are assigned twice
+            # Example: julianhyde/optiq 626
+            if prior_end > begin:
+                prior_index += 1
+                continue
+
+            for test in set(builds.loc[prior_build_number]['testName']):
                 if test in red_tests:
                     distance[test] = prior_index - index
                     red_tests.remove(test)
 
-            if not red_tests:
+            if red_tests:
+                prior_index += 1
+            else:
                 break
-            prior_index += 1
 
         for test in red_tests:
             distance[test] = np.nan
 
         rows.append((
-            builds.loc[build_numbers[index]]['travisBuildId'],
+            builds.loc[build_number]['travisBuildId'],
             min(distance.values())
         ))
         index += 1
@@ -92,11 +123,11 @@ def _build_apfd(project_path, untreated, strategies=None):
     }).reset_index()
 
 
-def compute_distances(project_path, strategies):
+def compute_distances(project_name, project_path, strategies):
     untreated = read_tests(folders.strategy(project_path, 'untreated'))
     builds = _failed_builds(untreated)
     apfd = _build_apfd(project_path, untreated, strategies)
-    distances = _failure_distance(builds)
+    distances = _failure_distance(project_name, builds)
     return pd.merge(left=apfd,
                     right=distances,
                     on='travisBuildId',
@@ -106,12 +137,56 @@ def compute_distances(project_path, strategies):
 def collect_distances(strategies):
     dfs = []
     for project_name, project_path in folders.projects():
-        dfs.append(compute_distances(project_path, strategies))
+        LOG.info('Processing %s', project_name)
+        dfs.append(compute_distances(project_name, project_path, strategies))
     return pd.concat(dfs)
 
 
-def _handle_project(project_path):
-    df = compute_distances(project_path)
+def _handle_project(project_name, project_path, strategies):
+    df = compute_distances(project_name, project_path, strategies)
+    chart = make_scatter_chart(df).properties(title=project_path)
+    output = os.path.join(folders.evaluation(project_path), 'testi2.png')
+    chart.save(output)
+
+###############################################################################
+
+
+def make_scatter_chart(h):
+    return make_scatter(h) & make_area(h) & make_area2(h) & make_support(h)
+
+
+def make_scatter(df):
+    return alt.Chart(df).mark_point(filled=True).encode(
+        x=alt.X('distance', title=''),
+        y=alt.Y('apfd', axis=alt.Axis(format='%'), title='APFD'),
+        color='strategy',
+        shape='strategy'
+    )
+
+
+def make_area(df):
+    #return alt.Chart(df, height=50).mark_line(interpolate='monotone').encode(
+    return alt.Chart(df, height=50).mark_line().encode(
+        x=alt.X('distance', title=''),
+        y=alt.Y('mean(apfd)', title='APFD', axis=alt.Axis(format='%')),
+        color='strategy')
+
+
+def make_area2(df):
+    #return alt.Chart(df, height=50).mark_area(interpolate='monotone', opacity=.3).encode(
+    return alt.Chart(df, height=50).mark_area(opacity=.3).encode(
+        x=alt.X('distance', title=''),
+        y=alt.Y('mean(apfd)', title='APFD', stack=None, axis=alt.Axis(format='%')),
+        color='strategy')
+
+
+def make_support(df):
+    return alt.Chart(df, height=50).mark_area(opacity=.3).encode(
+        x=alt.X('distance', title='Fault Distance'),
+        y=alt.Y('count()', title='Count', stack=None),
+        color='strategy')
+
+###############################################################################
 
 
 @click.group()
@@ -120,9 +195,26 @@ def cli():
 
 
 @cli.command()
-def scatter():
+@click.argument('strategies', nargs=-1)
+def scatter(strategies):
     for project_name, project_path in folders.projects():
-        _handle_project(project_path)
+        LOG.info('Processing %s', project_name)
+        _handle_project(project_name, project_path, strategies)
+
+
+@cli.command()
+@click.option('--output', required=True)
+@click.argument('strategies', nargs=-1)
+def scatter_all(output, strategies):
+    df = collect_distances(strategies)
+    chart = make_scatter_chart(df)
+    chart.save(output)
+
+
+@cli.command()
+@click.argument('strategies', nargs=-1)
+def comparison(strategies):
+    collect_distances(strategies)
 
 
 def distance_bar_chart(df):
