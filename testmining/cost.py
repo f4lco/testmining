@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
-
-import click
 import logging
 import os
+
+import click
+
 import altair as alt
 import pandas as pd
 

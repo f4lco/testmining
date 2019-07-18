@@ -1,7 +1,8 @@
 #! -*- encoding: utf-8 -*-
 import os
-import click
 import logging
+
+import click
 import matplotlib.pyplot as plt
 
 from matplotlib.ticker import PercentFormatter

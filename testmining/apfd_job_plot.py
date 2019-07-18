@@ -50,16 +50,10 @@ def distribution(df):
 
         ).transform_bin(**{'as': 'apfd_bin',
                            'field': 'apfd',
-                           'bin': alt.BinParams(step=0.075)}
-                        ).transform_aggregate(
-            bincount='count(travisJobId)',
-            groupby=['apfd_bin']
-        ).transform_window(
-            binsum='sum(bincount)',
-            frame=[None, None]
-        ).transform_calculate(
-            binrelative='datum.bincount / datum.binsum'
-        )
+                           'bin': alt.BinParams(step=0.075)}) \
+        .transform_aggregate(bincount='count(travisJobId)', groupby=['apfd_bin']) \
+        .transform_window(binsum='sum(bincount)', frame=[None, None]) \
+        .transform_calculate(binrelative='datum.bincount / datum.binsum')
 
     def rule():
         return alt.Chart().mark_rule(color='red', strokeDash=[1, 1]).encode(

@@ -7,6 +7,12 @@ from testmining import folders
 from testmining.util import connection
 
 
+def report_simple(project_path):
+    df = pd.read_csv(folders.strategy(project_path, 'untreated'))
+    tc = len(df[(df['errors'] > 0) | (df['failures'] > 0)]['testName'].unique())
+    print('Distinct failing TC %.2f' % tc)
+
+
 def report_tests(project_name, project_path):
     df = pd.read_csv(folders.strategy(project_path, 'untreated'))
     with connection() as conn:
@@ -40,8 +46,8 @@ def failed_count(df):
     print('Failing TC: %s' % failed)
 
 
-def failed_job_count_per_build(connection, project_name):
-    with connection.cursor() as c:
+def failed_job_count_per_build(conn, project_name):
+    with conn.cursor() as c:
         c.execute("""
         SELECT AVG(jobs_with_test)
         FROM (
@@ -60,8 +66,8 @@ def failed_job_count_per_build(connection, project_name):
         print('Average test jobs per build: %f' % avg)
 
 
-def job_count(connection, project_name):
-    with connection.cursor() as c:
+def job_count(conn, project_name):
+    with conn.cursor() as c:
         c.execute("""
         SELECT COUNT(tr_job_id)
         FROM travistorrent_8_2_2017
@@ -72,7 +78,7 @@ def job_count(connection, project_name):
         return count
 
 
-def report_changesets(project_name, project_path):
+def report_changesets(project_path):
     df = pd.read_csv(folders.patches(project_path))
     #number_of_commits(df)
     #commit_size(df)
@@ -112,8 +118,9 @@ def main():
 
     for project_name, project_path in projects:
         print(project_name)
-        report_tests(project_name, project_path)
-        #report_changesets(project_name, project_path)
+        report_simple(project_path)
+        #report_tests(project_name, project_path)
+        #report_changesets(project_path)
         print('-' * 30)
 
 

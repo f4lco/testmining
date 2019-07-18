@@ -29,6 +29,7 @@ def load_matrix(path, limit):
         df = df.head(limit)
     return df
 
+
 def heatmap(path, limit=None):
     return heatmap_chart(load_matrix(path, limit))
 

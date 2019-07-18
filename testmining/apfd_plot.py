@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
-
-import click
 import logging
 import os
+
+import click
 
 import altair as alt
 import pandas as pd
 
-from testmining import apfd, folders
+from testmining import folders
 
 # Strategies appear in this order in all plots
 STRATEGIES = [
@@ -141,8 +141,7 @@ def apfd_ridgeline(project_name, df, interpolate=None):
         )
 
     def rule():
-        return alt.Chart().mark_rule(color='red', strokeDash=[1, 1]).encode(
-                x='medianAPFD:Q')
+        return alt.Chart().mark_rule(color='red', strokeDash=[1, 1]).encode(x='medianAPFD:Q')
 
     def area(strategy_name):
         return alt.Chart(title=strategy_name).mark_area().encode(
@@ -150,16 +149,10 @@ def apfd_ridgeline(project_name, df, interpolate=None):
             y=alt.Y('binrelative:Q')
         ).transform_bin(**{'as': 'apfd_bin',
                            'field': 'apfd',
-                           'bin': alt.BinParams(step=0.075)}
-                        ).transform_aggregate(
-            bincount='count(travisJobId)',
-            groupby=['apfd_bin']
-        ).transform_window(
-            binsum='sum(bincount)',
-            frame=[None, None]
-        ).transform_calculate(
-            binrelative='datum.bincount / datum.binsum'
-        )
+                           'bin': alt.BinParams(step=0.075)}) \
+        .transform_aggregate(bincount='count(travisJobId)', groupby=['apfd_bin']) \
+        .transform_window(binsum='sum(bincount)', frame=[None, None]) \
+        .transform_calculate(binrelative='datum.bincount / datum.binsum')
 
     charts = []
     for strategy in df.columns[1:]:
@@ -197,8 +190,7 @@ def read_apfd(project_path, strategies=None):
     if strategies:
         columns = ['travisJobId'] + list(strategies)
         return df[columns]
-    else:
-        return df
+    return df
 
 
 def _main(strategies, plot_method):
@@ -211,7 +203,7 @@ def _main(strategies, plot_method):
 
 def collect_apfd(strategies=None):
     df = []
-    for project_name, project_path in folders.projects():
+    for _, project_path in folders.projects():
         df.append(read_apfd(project_path, strategies))
     return pd.concat(df, sort=True)
 

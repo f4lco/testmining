@@ -1,12 +1,13 @@
 # -*- encoding: utf-8 -*-
-import click
 import logging
 import os
 
+from functools import partial
+
+import click
+
 import altair as alt
 import pandas as pd
-
-from functools import partial
 
 from testmining import folders
 from testmining.apfd import read_tests
@@ -50,13 +51,7 @@ def chart(project_name, tests):
         y=alt.Y('median(faultsDetected)', scale=alt.Scale(domain=[0, 100]))
     )
 
-    mean = alt.Chart().mark_line(color='red').encode(
-        x='budget',
-        y='mean(faultsDetected)'
-    )
-
     title = "%s (Median Budget: %.2f)" % (project_name, median_budget)
-    #return alt.layer(median, mean).properties(data=df, title=title)
     return median.properties(data=df, title=title)
 
 

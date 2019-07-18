@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
-import click
 import logging
 import os
+import warnings
+
+import click
 
 import altair as alt
 import numpy as np
@@ -14,7 +16,7 @@ LOG = logging.getLogger(__file__)
 
 
 def _load_builds():
-    path = folders.builds()
+    path = folders.cache()
     with pd.HDFStore(path) as store:
         return store['builds']
 
@@ -86,11 +88,17 @@ def _failure_distance(project_name, builds):
 
         rows.append((
             builds.loc[build_number]['travisBuildId'],
-            min(distance.values())
+            _min_nan(distance.values())
         ))
         index += 1
 
     return pd.DataFrame(rows, columns=['travisBuildId', 'distance'])
+
+
+def _min_nan(it):
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', RuntimeWarning)
+        return np.nanmin(list(it))
 
 
 def _failed_builds(untreated):
@@ -152,39 +160,43 @@ def _handle_project(project_name, project_path, strategies):
 
 
 def make_scatter_chart(h):
-    return make_scatter(h) & make_area(h) & make_area2(h) & make_support(h)
+    #return make_scatter() & make_area() & make_area2() & make_support()
+    return (make_scatter() & make_support()).properties(data=h)
 
 
-def make_scatter(df):
-    return alt.Chart(df).mark_point(filled=True).encode(
-        x=alt.X('distance', title=''),
+def make_scatter():
+    return alt.Chart().mark_point(filled=True).encode(
+        x=alt.X('distance', title='', axis=None), #, scale=alt.Scale(domain=[1, 651])),
         y=alt.Y('apfd', axis=alt.Axis(format='%'), title='APFD'),
-        color='strategy',
-        shape='strategy'
+        color=alt.Color('strategy', legend=alt.Legend(title='Strategy')),
+        tooltip=['strategy', 'apfd', 'travisBuildId'],
     )
 
 
-def make_area(df):
-    #return alt.Chart(df, height=50).mark_line(interpolate='monotone').encode(
-    return alt.Chart(df, height=50).mark_line().encode(
+def make_area():
+    return alt.Chart(height=50).mark_line().encode(
         x=alt.X('distance', title=''),
-        y=alt.Y('mean(apfd)', title='APFD', axis=alt.Axis(format='%')),
+        y=alt.Y('median(apfd)', title='APFD', axis=alt.Axis(format='%')),
         color='strategy')
 
 
-def make_area2(df):
-    #return alt.Chart(df, height=50).mark_area(interpolate='monotone', opacity=.3).encode(
-    return alt.Chart(df, height=50).mark_area(opacity=.3).encode(
-        x=alt.X('distance', title=''),
+def make_area2():
+    return alt.Chart(height=50).mark_area(opacity=.3).encode(
+        x=alt.X('distance', title='', bin=alt.BinParams(maxbins=8)),
         y=alt.Y('mean(apfd)', title='APFD', stack=None, axis=alt.Axis(format='%')),
         color='strategy')
 
 
-def make_support(df):
-    return alt.Chart(df, height=50).mark_area(opacity=.3).encode(
-        x=alt.X('distance', title='Fault Distance'),
-        y=alt.Y('count()', title='Count', stack=None),
-        color='strategy')
+def make_support():
+    return alt.Chart(height=50).mark_bar().encode(
+        x=alt.X('distance', title='Failure Distance', bin=alt.BinParams(step=50, anchor=1)),
+        y=alt.Y('count()',
+                stack='zero',
+                title='Count',
+                scale=alt.Scale(type='log'),
+                axis=alt.Axis(grid=False, ticks=False)),
+        color=alt.value('#7a7a7a'),
+    )
 
 ###############################################################################
 
@@ -222,9 +234,10 @@ def distance_bar_chart(df):
         x=alt.X('strategy:O', axis=None),
         y=alt.Y('median(apfd)', scale=alt.Scale(domain=[0, 1]),
                 axis=alt.Axis(format='%', grid=False), title='APFD'),
-        color='strategy',
-        column=alt.Column('distance', bin=alt.BinParams(maxbins=20),
-                          title='Fault Distance')
+        color=alt.Color('strategy', legend=alt.Legend(title='Strategy')),
+        column=alt.Column('distance', bin=alt.BinParams(anchor=1, maxbins=20),
+                          title='Failure Distance'),
+        tooltip=['strategy', 'median(apfd)'],
     ).transform_filter("datum.distance != null")
 
 

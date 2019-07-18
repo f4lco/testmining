@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
-import click
 import logging
 
 from collections import OrderedDict
+
+import click
 
 from testmining import loader, cache
 
