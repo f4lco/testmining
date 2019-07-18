@@ -16,7 +16,7 @@ def apfd_plot(tests):
 
     def leftpadzero(xs):
         return pd.Series([0]).append(xs)
-    
+
     executed_sum = leftpadzero(tests['count'].cumsum())
     red_sum = leftpadzero(tests['red'].cumsum())
     return pd.DataFrame({

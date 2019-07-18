@@ -1,5 +1,12 @@
 # -*- encoding: utf-8 -*-
+import click
+import logging
+
 import pandas as pd
+
+from testmining import cache, loader
+
+KEY_PROJECTS = 'projects'
 
 
 def project_names(data):
@@ -76,11 +83,14 @@ def project_statistics(data):
     return projects
 
 
-if __name__ == '__main__':
-    from testmining.loader import read_dump
-    from testmining.cli import argument_parser, exporter
-
-    args = argument_parser().parse_args()
-    data = read_dump(args.filename)
+@click.command()
+@click.option('--filename', '-f', required=True)
+def main(filename):
+    data = loader.read_dump(filename)
     statistics = project_statistics(data)
-    exporter(args)('projects', statistics)
+    cache.write(KEY_PROJECTS, statistics)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    main()

@@ -1,0 +1,4 @@
+[MESSAGE CONTROL]
+disable=missing-docstring,
+	invalid-name,
+	no-value-for-parameter	

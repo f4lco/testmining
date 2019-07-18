@@ -11,7 +11,7 @@ jupyter = "*"
 # Vega 2.0 released, but Altair cannot cope with it
 # https://github.com/altair-viz/altair/issues/1114
 altair = "==2.4.1"
-vega = "==1.3"
+vega = "==1.4"
 vega-datasets = "*"
 tables = "*"
 "psycopg2-binary" = "*"
@@ -22,13 +22,14 @@ numpy = "<=1.15.4"
 tqdm = "*"
 click = "*"
 pipenv = "*"
-rbo = {editable = true, ref = "master", git = "https://github.com/changyaochen/rbo.git"}
+rbo = {editable = true,ref = "master",git = "https://github.com/changyaochen/rbo.git"}
 treon = "*"
 matplotlib = "*"
 
 [dev-packages]
 pytest = "*"
 nbdime = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.7"

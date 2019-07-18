@@ -1,15 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import click
-
-import numpy as np
-
-from collections import defaultdict
-from pprint import pprint
-
-from testmining.apfd_plot import read_apfd
-from testmining import folders
-
 """
 Make simple statements on per-project basis.
 
@@ -18,6 +8,14 @@ There are two groups of statements: one that is only concerned with baseline
 heuristics, and another set of statements comparing all matrix-based strategies
 to the best baseline heuristic.
 """
+from collections import defaultdict
+from pprint import pprint
+
+import click
+import numpy as np
+
+from testmining.apfd_plot import read_apfd
+from testmining import folders
 
 
 STATEMENTS = defaultdict(list)
@@ -69,10 +67,10 @@ def cli():
     pass
 
 
-@cli.command()
-def baseline():
+@cli.command('baseline')
+def baseline_main():
     d = defaultdict(lambda: 0)
-    for project_name, project_path in folders.projects():
+    for _, project_path in folders.projects():
         df = read_apfd(project_path)[[
             'untreated',
             'random',
@@ -117,10 +115,10 @@ def file_path_agreement(df):
                       df['matrix-file-similarity'])
 
 
-@cli.command()
-def matrix():
+@cli.command('matrix')
+def matrix_main():
     d = defaultdict(lambda: 0)
-    for project_name, project_path in folders.projects():
+    for _, project_path in folders.projects():
         df = read_apfd(project_path)[[
             'recently-failed',
             'matrix-conditional-prob',

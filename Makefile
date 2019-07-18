@@ -1,6 +1,8 @@
 
 DUMP=travistorrent_8_2_2017.csv
 
+lint:
+	pylint testmining
 
 notebook:
 	pipenv run jupyter notebook -y --notebook-dir notebook
@@ -10,7 +12,7 @@ test:
 	cd notebook && pipenv run treon --threads 1
 
 projects:
-	pipenv run python -m testmining.projects -f $(DUMP)
+	PRIO_BASE=output pipenv run python -m testmining.projects -f $(DUMP)
 
 builds:
 	PRIO_BASE=output pipenv run python -m testmining.builds -f $(DUMP)

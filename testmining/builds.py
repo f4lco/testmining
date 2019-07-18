@@ -2,13 +2,9 @@
 import click
 import logging
 
-import pandas as pd
-
 from collections import OrderedDict
 
-from testmining import loader, folders
-
-LOG = logging.getLogger(__file__)
+from testmining import loader, cache
 
 KEY_BUILDS = 'builds'
 
@@ -47,26 +43,14 @@ def build_statistics(data):
     return groups.agg(aggregations)
 
 
-def read(key):
-    with pd.HDFStore(folders.builds()) as store:
-        return store[key]
-
-
-def write(key, df):
-    filename = folders.builds()
-    LOG.info("Begin writing DF '%s' to '%s'", key, filename)
-    with pd.HDFStore(filename) as store:
-        store[key] = df
-    LOG.info("Completed writing DF '%s' to '%s'", key, filename)
-
-
 @click.command()
 @click.option('-f', '--filename', help='Location of TravisTorrent CSV', required=True)
 def main(filename):
     data = loader.read_dump(filename)
     statistics = build_statistics(data)
-    write(KEY_BUILDS, statistics)
+    cache.write(KEY_BUILDS, statistics)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     main()

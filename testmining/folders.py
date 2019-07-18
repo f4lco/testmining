@@ -62,8 +62,8 @@ def patches(project_path):
     return os.path.join(project_path, '%s-patches.csv' % project_name)
 
 
-def builds():
-    return os.path.join(base_folder(), 'builds.hd5')
+def cache():
+    return os.path.join(base_folder(), 'cache.hd5')
 
 
 def _ensure_exists(path):
