@@ -36,10 +36,9 @@ def heatmap(path, limit=None):
 
 def heatmap_chart(df):
     return alt.Chart(df).mark_rect().encode(
-      x=alt.X('shortFileName:O', title=''),
-      y=alt.Y('shortTestName:O', title=''),
-      color=alt.Color('failureCount:Q', scale=alt.Scale(scheme='blues'),
-                      title='Failures'))
+        x=alt.X('shortFileName:O', title=''),
+        y=alt.Y('shortTestName:O', title=''),
+        color=alt.Color('failureCount:Q', scale=alt.Scale(scheme='blues'), title='Failures'))
 
 
 def bubbly_heatmap(path, limit=None):
@@ -48,7 +47,7 @@ def bubbly_heatmap(path, limit=None):
 
 def bubbly_heatmap_chart(df):
     return alt.Chart(df).mark_point(filled=True).encode(
-      x=alt.X('shortFileName:O', title=''),
-      y=alt.Y('shortTestName:O', title=''),
-      size='failureCount:Q',
-      tooltip=['shortFileName', 'shortTestName', 'failureCount'])
+        x=alt.X('shortFileName:O', title=''),
+        y=alt.Y('shortTestName:O', title=''),
+        size='failureCount:Q',
+        tooltip=['shortFileName', 'shortTestName', 'failureCount'])

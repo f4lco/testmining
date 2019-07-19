@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
-import click
 import logging
+
+import click
 
 import numpy as np
 import pandas as pd

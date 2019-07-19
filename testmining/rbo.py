@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
-import click
 import logging
 import os
+
+import click
 import rbo
 
 import pandas as pd
@@ -48,9 +49,9 @@ def write(df, project_path):
 def main():
     rbo_values = []
     for project_name, project_path in folders.projects():
-        rbo = report_rbo(project_path)
-        rbo_values.append(rbo)
-        print("%-20s %.3f" % (project_name, rbo.median()))
+        rbo_value = report_rbo(project_path)
+        rbo_values.append(rbo_value)
+        print("%-20s %.3f" % (project_name, rbo_value.median()))
     all_rbo = pd.concat(rbo_values)
     #import numpy as np
     #all_rbo.where(all_rbo != 1.0, np.nan, inplace=True)
