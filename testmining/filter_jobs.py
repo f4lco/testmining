@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-
-import click
 import logging
 import os
+
+import click
 
 import pandas as pd
 
@@ -17,8 +17,8 @@ def main():
     pass
 
 
-@main.command()
-def offenders():
+@main.command('offenders')
+def offenders_main():
     with connection() as conn:
         for project_name, project_path in folders.projects():
             offenders = folders.offenders(project_path)

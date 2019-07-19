@@ -14,6 +14,8 @@ from testmining.apfd import read_tests
 
 LOG = logging.getLogger(__file__)
 
+# pragma pylint: disable=fixme
+
 
 def _load_builds():
     path = folders.cache()

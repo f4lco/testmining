@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
-
-import click
-import collections
 import json
 import logging
 import os
+
+import click
 
 import pandas as pd
 
@@ -36,8 +35,6 @@ def process(cache, project_path):
         rows.append((matrix['jobId'], len(files), len(tc)))
 
     return pd.DataFrame(rows, columns=['travisJobId', 'fileCount', 'testCount'])
-
-
 
 
 @click.command()

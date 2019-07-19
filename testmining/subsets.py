@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 import os
-import click
 import logging
+
+import click
 
 import pandas as pd
 
@@ -43,8 +44,8 @@ def compare_one_strategy_to_baseline():
                                 output)
 
 
-@cli.command()
-def offenders():
+@cli.command('offenders')
+def offenders_main():
     for project_name, project_path in folders.projects():
         apfd = pd.read_csv(folders.apfd(project_path))[[
             'travisJobId',
@@ -55,16 +56,16 @@ def offenders():
         mask = apfd['travisJobId'].isin(offenders['tr_job_id'])
         output = os.path.join(folders.evaluation(project_path), 'offenders-%s.png' % project_name)
         apfd_plot.save_box_plot('Offenders in %s' % project_name,
-                                 project_path,
-                                 apfd[mask],
-                                 output)
+                                project_path,
+                                apfd[mask],
+                                output)
 
 
 @cli.command()
 @click.option('--output', required=True)
 def offenders_combined(output):
     dfs = []
-    for project_name, project_path in folders.projects():
+    for _, project_path in folders.projects():
         apfd = pd.read_csv(folders.apfd(project_path))[[
             'travisJobId',
             'recently-failed',
@@ -76,9 +77,9 @@ def offenders_combined(output):
 
     df = pd.concat(dfs)
     apfd_plot.save_box_plot('Offenders',
-                             None,
-                             df,
-                             output)
+                            None,
+                            df,
+                            output)
 
 
 @cli.command()
@@ -93,16 +94,16 @@ def pull_requests():
         mask = apfd['travisJobId'].isin(pr['tr_job_id'])
         output = os.path.join(folders.evaluation(project_path), 'pr-%s.png' % project_name)
         apfd_plot.save_box_plot('PRs in %s' % project_name,
-                                 project_path,
-                                 apfd[mask],
-                                 output)
+                                project_path,
+                                apfd[mask],
+                                output)
 
 
 @cli.command()
 @click.option('--output', required=True)
 def pull_requests_combined(output):
     dfs = []
-    for project_name, project_path in folders.projects():
+    for _, project_path in folders.projects():
         apfd = pd.read_csv(folders.apfd(project_path))[[
             'travisJobId',
             'recently-failed',

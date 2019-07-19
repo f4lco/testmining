@@ -1,4 +1,5 @@
 [MESSAGE CONTROL]
-disable=missing-docstring,
-	invalid-name,
-	no-value-for-parameter	
+disable=missing-docstring, # too many false positives
+	invalid-name, # 'df' anyone?
+	no-value-for-parameter, # all 'click' commands
+	duplicate-code # also counts similar import statements

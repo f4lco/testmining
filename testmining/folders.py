@@ -31,9 +31,9 @@ def strategies(project_path):
     return find_files(folder, STRATEGY_PATTERN)
 
 
-def strategy(project_path, strategy):
+def strategy(project_path, strategy_name):
     repository = _name(project_path).split('@', maxsplit=2)[1]
-    filename = '%s@%s.csv' % (repository, strategy)
+    filename = '%s@%s.csv' % (repository, strategy_name)
     return os.path.join(project_path, qualifier(), filename)
 
 

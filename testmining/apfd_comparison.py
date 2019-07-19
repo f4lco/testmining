@@ -8,6 +8,7 @@ There are two groups of statements: one that is only concerned with baseline
 heuristics, and another set of statements comparing all matrix-based strategies
 to the best baseline heuristic.
 """
+
 from collections import defaultdict
 from pprint import pprint
 
