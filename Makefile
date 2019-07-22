@@ -2,7 +2,7 @@
 DUMP=travistorrent_8_2_2017.csv
 
 lint:
-	pylint testmining
+	pylint testmining tests
 
 notebook:
 	pipenv run jupyter notebook -y --notebook-dir notebook
