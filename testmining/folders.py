@@ -26,6 +26,10 @@ def projects():
             yield item, path
 
 
+def project(project_name):
+    return os.path.join(base_folder(), project_name)
+
+
 def strategies(project_path):
     folder = os.path.join(project_path, qualifier())
     return find_files(folder, STRATEGY_PATTERN)
@@ -64,6 +68,10 @@ def patches(project_path):
 
 def cache():
     return os.path.join(base_folder(), 'cache.hd5')
+
+
+def travis_torrent():
+    return os.path.join(base_folder(), 'travistorrent_8_2_2017.csv')
 
 
 def _ensure_exists(path):

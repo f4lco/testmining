@@ -9,8 +9,10 @@ notebook:
 
 test:
 	pipenv run pytest tests
-	cd notebook && pipenv run treon --threads 1
 
+treon: test
+	pipenv run python -m tests.notebooks
+	
 projects:
 	PRIO_BASE=output pipenv run python -m testmining.projects -f $(DUMP)
 
@@ -45,4 +47,4 @@ thesis-images-mpl:
 
 evaluation: apfd sanity
 
-.PHONY: apfd notebook
+.PHONY: apfd notebook test
