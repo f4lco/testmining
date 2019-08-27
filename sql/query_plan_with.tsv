@@ -1,0 +1,11 @@
+Limit  (cost=1266775.27..1266806.44 rows=5 width=97)
+  CTE jobs
+    ->  Seq Scan on travistorrent_8_2_2017  (cost=0.00..1265921.43 rows=1642 width=67)
+          Filter: (gh_project_name = 'google/guava'::text)
+  CTE commits
+    ->  CTE Scan on jobs  (cost=0.00..853.84 rows=164200 width=52)
+  ->  Nested Loop  (cost=0.00..56158462927457.60 rows=9007733096448 width=97)
+        Join Filter: (commits.git_commit_id = (raw_patches.sha)::text)
+        ->  CTE Scan on commits  (cost=0.00..3284.00 rows=164200 width=52)
+        ->  Materialize  (cost=0.00..1054333324.32 rows=10971660288 width=86)
+              ->  Seq Scan on raw_patches  (cost=0.00..849471854.88 rows=10971660288 width=86)
