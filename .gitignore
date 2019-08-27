@@ -2,5 +2,3 @@
 /output
 .ipynb_checkpoints
 __pycache__
-/tests/resources/output-sample/**
-!/tests/resources/output-sample/.gitkeep
