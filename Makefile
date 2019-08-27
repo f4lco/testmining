@@ -26,7 +26,7 @@ boxplot:
 	PRIO_BASE=output pipenv run python -m testmining.apfd_plot boxes untreated recently-failed matrix-recently-changed optimal-failure
 
 boxplot-open:
-	find output -path "*/${PRIO_QUALIFIER}-evaluation/*-boxplot.png" | xargs open
+	find output -path "*/${PRIO_QUALIFIER:-baseline}-evaluation/*-boxplot.png" | xargs open
 
 ridgeline:
 	PRIO_BASE=output pipenv run python -m testmining.apfd_plot ridgelines untreated recently-failed matrix-recently-changed optimal-failure
@@ -43,7 +43,10 @@ apfd:
 thesis-images-mpl:
 	pipenv run python -m testmining.apfd_plot_mpl combined --output all-untreated-optimal.pdf untreated optimal-failure
 	pipenv run python -m testmining.apfd_plot_mpl combined --output baseline.pdf untreated random lru recently-failed
+	pipenv run python -m testmining.apfd_plot_mpl combined --output baseline-optimal.pdf untreated random lru recently-failed optimal-failure
 	pipenv run python -m testmining.apfd_plot_mpl combined --output matrix.pdf recently-failed matrix-conditional-prob matrix-path-similarity matrix-file-similarity matrix-tc-similarity matrix-recently-changed
+	pipenv run python -m testmining.apfd_plot_mpl combined --output matrix2.pdf matrix-conditional-prob matrix-path-similarity matrix-file-similarity matrix-tc-similarity matrix-recently-changed
+	pipenv run python -m testmining.apfd_plot_mpl combined --output all.pdf untreated random lru recently-failed matrix-conditional-prob matrix-path-similarity matrix-file-similarity matrix-tc-similarity matrix-recently-changed optimal-failure
 
 evaluation: apfd sanity
 
