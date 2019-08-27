@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+
+"""
+On per-project basis, create charts for the distribution of APFD values, either
+as bar, boxplot, or ridgeline chart.
+"""
+
 import logging
 import os
 
@@ -208,7 +214,7 @@ def collect_apfd(strategies=None):
     return pd.concat(df, sort=True)
 
 
-@click.group()
+@click.group(help=__doc__)
 def cli():
     pass
 

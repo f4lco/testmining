@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Print project statistics for the summary table of the thesis.
+"""
+
 import click
 
 import pandas as pd
@@ -106,7 +111,7 @@ def distinct_files(df):
     print('Number of unique files: %d' % count)
 
 
-@click.command()
+@click.command(help=__doc__)
 def main():
     projects = list(folders.projects())
 

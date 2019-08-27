@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Compare the similarity of test plans resulting from cost-cognizant and
+non-cost-cognizant prioritization using Rank-biased Overlap (RBO).
+"""
+
 import logging
 import os
 
@@ -45,7 +51,7 @@ def write(df, project_path):
     #LOG.info('Written %s', output)
 
 
-@click.command()
+@click.command(help=__doc__)
 def main():
     rbo_values = []
     for project_name, project_path in folders.projects():
@@ -56,7 +62,6 @@ def main():
     #import numpy as np
     #all_rbo.where(all_rbo != 1.0, np.nan, inplace=True)
     print('General Median: %f' % all_rbo.median())
-
 
 
 if __name__ == '__main__':

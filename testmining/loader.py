@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Load the TravisTorrent CSV, and coerce datatypes for certain columns.
+"""
+
 import logging
 
 import pandas as pd

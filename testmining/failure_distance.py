@@ -1,4 +1,12 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Compute failure distances.
+
+Failure distances describe the minimum number of builds, which a test case of
+the current build failed the last time.
+"""
+
 import logging
 import os
 import warnings
@@ -203,7 +211,7 @@ def make_support():
 ###############################################################################
 
 
-@click.group()
+@click.group(help=__doc__)
 def cli():
     pass
 

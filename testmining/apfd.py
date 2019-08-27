@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Compute APFD scores from a CSV file containing test executions.
+"""
+
 import click
 import numpy as np
 import pandas as pd
@@ -45,7 +50,7 @@ def df_apfd(tests):
     return jobs.apply(lambda job: apfd(apfd_plot(job))).median()
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.argument('filename')
 def cli(filename):
     print(file_apfd(filename))

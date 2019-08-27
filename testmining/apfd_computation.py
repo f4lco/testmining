@@ -1,4 +1,11 @@
 # -*- encoding: utf-8 -*-
+
+"""
+For each project, compute and cache APFD scores in one CSV.
+
+The CSV has one row for every job, and the columns consist of the strategies.
+"""
+
 import logging
 import os
 
@@ -28,7 +35,7 @@ def write(project_name, project_folder, df):
     LOG.info('Written %s', path)
 
 
-@click.command()
+@click.command(help=__doc__)
 def main():
     logging.basicConfig(level=logging.INFO)
     for name, folder in folders.projects():

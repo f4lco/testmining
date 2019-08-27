@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Altair Examples.
+"""
+
 import altair as alt
 import vega_datasets
 

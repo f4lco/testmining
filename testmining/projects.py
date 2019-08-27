@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Read TravisTorrent CSV, and cache per-project aggregates in the cache.
+"""
+
 import logging
 
 import click
@@ -84,7 +89,7 @@ def project_statistics(data):
     return projects
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.option('--filename', '-f', required=True)
 def main(filename):
     data = loader.read_dump(filename)

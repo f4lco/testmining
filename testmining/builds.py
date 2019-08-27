@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Take the TravisTorrent CSV, compute and cache per-build aggregates.
+"""
+
 import logging
 
 from collections import OrderedDict
@@ -44,7 +49,7 @@ def build_statistics(data):
     return groups.agg(aggregations)
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.option('-f', '--filename', help='Location of TravisTorrent CSV', required=True)
 def main(filename):
     data = loader.read_dump(filename)

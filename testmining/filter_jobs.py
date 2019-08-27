@@ -1,4 +1,14 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Given the database, use SQL to extract different types of jobs.
+
+- offenders: the preceding build was green.
+- pull requests: this build is part of a pull request.
+
+The queries can be expensive; therefore, store a CSV for use with notebooks.
+"""
+
 import logging
 import os
 

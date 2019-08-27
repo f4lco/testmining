@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+How many faults can be detected given different time budgets?
+"""
+
 import logging
 import os
 
@@ -65,7 +70,7 @@ def save_chart(project_name, project_path):
     LOG.info('Written %s', output)
 
 
-@click.group()
+@click.group(help=__doc__)
 def cli():
     pass
 

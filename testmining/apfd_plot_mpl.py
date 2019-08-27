@@ -1,4 +1,12 @@
 #! -*- encoding: utf-8 -*-
+
+"""
+Create boxplot charts for the APFD distribution using matplotlib.
+
+The former version of Altair did not ship native support for boxplots.
+The most recent version of Altair has native support for boxplots, but does not
+allow sorting the columns.
+"""
 import os
 import logging
 
@@ -43,7 +51,7 @@ def labels(strategies, df):
             for name in strategies]
 
 
-@click.group()
+@click.group(help=__doc__)
 def cli():
     pass
 

@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Check invariants on the resulting prioritized test order, such as "optimal failure
+achieves the highest APFD score".
+"""
+
 import logging
 
 import click

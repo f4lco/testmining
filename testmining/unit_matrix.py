@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Inspect the matrix cache directory and provide per-job file and test counts.
+"""
+
 import json
 import logging
 import os
@@ -37,7 +42,7 @@ def process(cache, project_path):
     return pd.DataFrame(rows, columns=['travisJobId', 'fileCount', 'testCount'])
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.option('--cache', required=True)
 def main(cache):
     logging.basicConfig(level=logging.INFO)

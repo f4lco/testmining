@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Create heatmaps for a series of jobs. Looking at the past revisions, to which
+degree has file f been connected to test case t?
+"""
+
 import json
 
 import altair as alt

@@ -63,7 +63,7 @@ def random_is_worse(df):
     return df['random'] < df['untreated']
 
 
-@click.group()
+@click.group(help=__doc__)
 def cli():
     pass
 

@@ -1,4 +1,13 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Try to convert a prioritized test order into a classifier and measure precision
+and recall.
+
+Currently two test selection techniques ("selectors") are available:
+- take top N tests
+- run tests until encountering N consecutive green tests
+"""
 import abc
 import logging
 import os
@@ -139,7 +148,7 @@ def iterate(df, selectors):
             yield from_project(df, selector)
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.option('--selectors', '-s', required=True, multiple=True)
 @click.option('--strategy', required=True)
 def main(selectors, strategy):

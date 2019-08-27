@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+List common path names.
+"""
+
 import os
 import re
 from testmining.util import find_files

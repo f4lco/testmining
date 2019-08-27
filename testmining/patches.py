@@ -1,4 +1,18 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Select subsets of the raw patches table.
+
+This selects a subset of rows (only changelists for selected projects) as well
+as a subset of columns (exclude the full diff, for example).
+The queries are by intention point queries and *not* a join. According to the
+Postgres query plan, point queries show the best index utilization.
+Postgres employs a heuristic such as "if query selectivity is below n percent,
+sequential scanning is cheaper than using a index". Give raw patches, this
+is hindering: the table is quite big, sequential scanning takes several days,
+and the index (commit checksums in a tree) already reaches 1 TB in size.
+"""
+
 import logging
 import os
 import sys
@@ -46,7 +60,7 @@ def write_patches(conn, project, output):
     LOG.info('Written %s', filename)
 
 
-@click.command()
+@click.command(help=__doc__)
 @click.option("--output")
 def main(output):
     with connection() as conn:

@@ -1,5 +1,13 @@
 # -*- encoding: utf-8 -+-
 
+"""
+For a single job, plot the APFD chart, meaning the rate of fault detection as the
+test execution progresses.
+
+For a set of jobs, plot the APFD distribution chart, meaning a line chart showing
+the distribution and median of APFD values within a particular project.
+"""
+
 import altair as alt
 import pandas as pd
 

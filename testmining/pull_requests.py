@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+
+"""
+Derive per pull request statistics.
+"""
+
 import pandas as pd
 
 

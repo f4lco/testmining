@@ -4,6 +4,10 @@ import pandas as pd
 
 from testmining import folders
 
+"""
+Small file-based cache using PyTables, which works like a dictionary.
+"""
+
 LOG = logging.getLogger(__file__)
 
 __all__ = [
